@@ -25,6 +25,7 @@ SAMPLE_RATE = 22050
 
 # ============================================================================
 
+from typing import Any
 import numpy as np
 import subprocess
 import tempfile
@@ -157,7 +158,7 @@ def main():
     
     # Initialize TTS model
     print("📥 Loading TTS model...")
-    tts = TTS(model_name=MODEL_NAME, progress_bar=False, gpu=False)
+    tts: Any = TTS(model_name=MODEL_NAME, progress_bar=False, gpu=False)
     print("✅ TTS model loaded successfully!")
     
     # Display available speakers for reference
