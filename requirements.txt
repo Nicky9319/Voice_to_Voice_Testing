@@ -10,3 +10,9 @@ numpy
 scipy
 sounddevice
 protobuf==3.20.3
+python-dotenv
+requests
+aiohttp
+webrtcvad
+pyaudio
+notebook
