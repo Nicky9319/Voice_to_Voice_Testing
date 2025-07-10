@@ -1,3 +1,4 @@
 output.wav
 transcription.txt
 .env
+livekit_testing/Frontend/node_modules

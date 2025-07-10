@@ -1,0 +1,51 @@
+/* [project]/app/commitmono_fb1c42e5.module.css [app-client] (css) */
+@font-face {
+  font-family: commitMono;
+  src: url("../media/CommitMono_400_Regular-s.p.5aa48ba3.otf") format("opentype");
+  font-display: swap;
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: commitMono;
+  src: url("../media/CommitMono_700_Regular-s.p.6d72ba9f.otf") format("opentype");
+  font-display: swap;
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: commitMono;
+  src: url("../media/CommitMono_400_Italic-s.p.c142237d.otf") format("opentype");
+  font-display: swap;
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: commitMono;
+  src: url("../media/CommitMono_700_Italic-s.p.e09f3bdd.otf") format("opentype");
+  font-display: swap;
+  font-weight: 700;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: commitMono Fallback;
+  src: local(Arial);
+  ascent-override: 68.45%;
+  descent-override: 15.21%;
+  line-gap-override: 0.0%;
+  size-adjust: 131.49%;
+}
+
+.commitmono_fb1c42e5-module__JmbB2q__className {
+  font-family: commitMono, commitMono Fallback;
+}
+
+.commitmono_fb1c42e5-module__JmbB2q__variable {
+  --font-commit-mono: "commitMono", "commitMono Fallback";
+}
+
+/*# sourceMappingURL=app_commitmono_fb1c42e5_module_css_f9ee138c._.single.css.map*/
