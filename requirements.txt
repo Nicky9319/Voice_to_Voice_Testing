@@ -1,1 +1,12 @@
 faster-whisper
+TTS
+torch
+torchvision
+torchaudio
+livekit-api
+livekit-agents
+PyJWT
+numpy
+scipy
+sounddevice
+protobuf==3.20.3
