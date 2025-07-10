@@ -4,6 +4,12 @@ import subprocess
 from faster_whisper import WhisperModel
 import torch
 
+# Set LD_LIBRARY_PATH to include cuDNN libraries
+if 'LD_LIBRARY_PATH' not in os.environ:
+    os.environ['LD_LIBRARY_PATH'] = '/lib/x86_64-linux-gnu'
+else:
+    os.environ['LD_LIBRARY_PATH'] = '/lib/x86_64-linux-gnu:' + os.environ['LD_LIBRARY_PATH']
+
 def check_system_info():
     """Check system information for debugging"""
     print("=== SYSTEM DIAGNOSTICS ===")
@@ -143,12 +149,18 @@ def main():
     model_size = "small"
     audio_file = "output.wav"
     
-    # Force CPU model for guaranteed compatibility
-    model, model_type = try_cpu_model(model_size)
+    # Force GPU first - don't fallback to CPU immediately
+    print("\n=== FORCING GPU USAGE ===")
+    model, model_type = try_gpu_model(model_size)
     
-    # If CPU fails, exit
+    # Only fallback to CPU if GPU completely fails
     if model is None:
-        print("\n✗ Failed to create model with CPU")
+        print("\n=== GPU FAILED, FALLING BACK TO CPU ===")
+        model, model_type = try_cpu_model(model_size)
+    
+    # If both fail, exit
+    if model is None:
+        print("\n✗ Failed to create model with both GPU and CPU")
         print("Please check your installation and try again")
         sys.exit(1)
     
