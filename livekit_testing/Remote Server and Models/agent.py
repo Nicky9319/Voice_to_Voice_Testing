@@ -16,7 +16,7 @@ load_dotenv()
 
 from custom_agent import StaticAgent  # Assuming StaticAgent is defined in custom_agent.py
 
-class Assistant(Agent):
+class Assistant(StaticAgent):
     def __init__(self) -> None:
         super().__init__(instructions="You are a helpful voice AI assistant.")
 
