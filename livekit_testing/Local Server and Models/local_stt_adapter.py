@@ -2,14 +2,15 @@ import asyncio
 import tempfile
 import os
 import numpy as np
-from typing import Optional, Tuple
+from typing import Optional, Tuple, AsyncGenerator
 from faster_whisper import WhisperModel
 import torch
 import wave
 import pyaudio
+from livekit.agents.stt import STT
 
-class LocalSTTAdapter:
-    """Local STT adapter using faster-whisper for LiveKit voice assistant"""
+class LocalWhisperSTT(STT):
+    """Local Whisper STT adapter for LiveKit using faster-whisper"""
     
     def __init__(self, model_size: str = "small", device: str = "auto"):
         self.model_size = model_size
@@ -68,6 +69,62 @@ class LocalSTTAdapter:
             except Exception as e2:
                 print(f"❌ Failed to load STT model on CPU: {e2}")
                 raise
+
+    async def transcribe(self, audio_data: bytes) -> Optional[str]:
+        """Transcribe audio data - LiveKit STT interface method"""
+        if not self._initialized:
+            await self.initialize()
+            
+        try:
+            # Create temporary file for audio data
+            with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as temp_file:
+                temp_path = temp_file.name
+                temp_file.write(audio_data)
+                
+            # Run transcription in a thread pool
+            loop = asyncio.get_event_loop()
+            segments, info = await loop.run_in_executor(
+                None,
+                lambda: self.model.transcribe(temp_path, beam_size=5)
+            )
+            
+            # Convert generator to list and extract text
+            segments_list = list(segments)
+            text = " ".join([segment.text.strip() for segment in segments_list])
+            
+            # Clean up
+            os.unlink(temp_path)
+            
+            print(f"✅ Local transcription: '{text}'")
+            return text
+            
+        except Exception as e:
+            print(f"❌ Local transcription failed: {e}")
+            return None
+
+    async def transcribe_stream(self, audio_stream: AsyncGenerator[bytes, None]) -> AsyncGenerator[str, None]:
+        """Transcribe audio stream - LiveKit STT interface method"""
+        if not self._initialized:
+            await self.initialize()
+            
+        # Accumulate audio data
+        audio_buffer = b""
+        
+        async for audio_chunk in audio_stream:
+            audio_buffer += audio_chunk
+            
+            # Process accumulated audio (you might want to adjust this logic)
+            if len(audio_buffer) > 32000:  # Process every ~2 seconds of audio
+                result = await self.transcribe(audio_buffer)
+                if result:
+                    yield result
+                audio_buffer = b""
+        
+        # Process remaining audio
+        if audio_buffer:
+            result = await self.transcribe(audio_buffer)
+            if result:
+                yield result
                 
     async def transcribe_audio_file(self, audio_file_path: str) -> Optional[str]:
         """Transcribe an audio file"""
